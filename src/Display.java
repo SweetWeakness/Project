@@ -1,14 +1,18 @@
+import javax.naming.CompositeName;
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
-public class Display {
+public class Display extends JFrame {
 
     private JFrame window;
     public Triangle[] triangles;
     public Point[] points;
+    public JPanel content;
+
 
     public void create(int width, int height, String title){//метод для создания окна
 
@@ -37,10 +41,11 @@ public class Display {
 
 
         //рисовач
-        JPanel content=new JPanel();
+        content=new JPanel();
+        content.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        content.setLayout(null);
         window.getContentPane().add(content);
         content.setBounds(0,0,767,800);
-
 
 
 
@@ -101,6 +106,7 @@ public class Display {
                 ButOK.setVisible(true);
                 ButRanAdd.setBounds(5,80,242,50);
                 ButRanAdd.setText("Изменить случайные точки");
+                content.repaint();
             }
         });
 
@@ -131,7 +137,7 @@ public class Display {
         Point[] ArrG=new Point[3*NG];
 
         for(int i=0;i<3*NG;i++){
-            ArrG[i]=new Point(random.nextDouble(),random.nextDouble());
+            ArrG[i]=new Point(random.nextInt(767),random.nextInt(800));
         }
 
         return ArrG;
@@ -144,17 +150,17 @@ public class Display {
 
 
         int n=points.length;//кол-во точек
-        double max;//для посика точки с наибольшей координатой по Оу
+        int max;//для посика точки с наибольшей координатой по Оу
         int k=0;//для запоминания индесов
-        double min;//для поиска минимума
+        int min;//для поиска минимума
         Point[] arr=points;//наши объекты
 
 
         //поиск макса
-        max=arr[0].getY();
+        max=arr[0].getYP();
         for(int i=1;i<n;i++){
-            if(max<arr[i].getY()){
-                max=arr[i].getY();
+            if(max<arr[i].getYP()){
+                max=arr[i].getYP();
             }
         }
 
@@ -165,8 +171,8 @@ public class Display {
         int[] x=new int[n];//цикл по заполнению массива "х" индесами из массива объектов
         for(int i=0;i<n;i++){//в итоге он будет заполнен индексами по порядку, то есть если a1(индекс)>a2, то у точки
             for(int j=0;j<n;j++){//в массиве с индексом x[а1] координата по Оy> чем у точки в массиве с индексом x[а2]
-                if (arr[j].getY()<=min&&arr[j].getFlg()){//поиск минимума по Оу (точка должна быть еще не рассмотрена)
-                    min=arr[j].getY();
+                if (arr[j].getYP()<=min&&arr[j].getFlg()){//поиск минимума по Оу (точка должна быть еще не рассмотрена)
+                    min=arr[j].getYP();
                     k=j;
                 }
             }
@@ -191,9 +197,16 @@ public class Display {
     }
 
     private void writing(Point[] points){
-        for (int i=0;i<points.length;i++){
+        content.repaint();
+    }
 
 
+    public void
+    paint(Graphics g){
+        super.paint(g);
+        g.setColor(Color.BLACK);
+        for(Point p:points){
+            g.drawOval(p.getXP()-2,p.getYP()-2,5,5);
         }
     }
 }

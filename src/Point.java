@@ -4,17 +4,17 @@ import java.awt.*;
 public class Point{
 
     //поля координат точки
-    private double x;
-    private double y;
+    private int x;
+    private int y;
     //поле flg
     boolean flg;
 
     //сетеры
-    void setX(double x) {
+    void setX(int x) {
         this.x = x;
     }
 
-    void setY(double y) {
+    void setY(int y) {
         this.y = y;
     }
 
@@ -23,11 +23,11 @@ public class Point{
     }
 
     //гетеры
-    double getX() {
+    int getXP() {
         return this.x;
     }
 
-    double getY() {
+    int getYP() {
         return this.y;
     }
 
@@ -42,7 +42,7 @@ public class Point{
         flg = true;
     }
 
-    Point(double x, double y) {
+    Point(int x, int y) {
         this.x = x;
         this.y = y;
         flg = true;
@@ -57,11 +57,6 @@ public class Point{
     //убирает точку из доступных для рассмотрения
     void del() {
         this.flg = false;
-    }
-
-
-    public void writing(Graphics g){
-        g.fillOval(0,0,3,3);
     }
 
 }

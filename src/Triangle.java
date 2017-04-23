@@ -1,10 +1,10 @@
 public class Triangle {
-    double ax;
-    double ay;
-    double bx;
-    double by;
-    double cx;
-    double cy;
+    int ax;
+    int ay;
+    int bx;
+    int by;
+    int cx;
+    int cy;
 
     Triangle() {
         ax = 0;
@@ -16,12 +16,12 @@ public class Triangle {
     }
 
     Triangle(Point a, Point b, Point c) {
-        ax = a.getX();
-        ay = a.getY();
-        bx = b.getX();
-        by = b.getY();
-        cx = c.getX();
-        cx = c.getY();
+        ax = a.getXP();
+        ay = a.getYP();
+        bx = b.getXP();
+        by = b.getYP();
+        cx = c.getXP();
+        cy = c.getYP();
     }
 
     @Override
