@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Point{
+public class Point extends JPanel{
 
     //поля координат точки
     private int x;
@@ -59,6 +59,13 @@ public class Point{
         this.flg = false;
     }
 
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        g.setColor(Color.black);
+        g.drawOval(0,0,3,3);
+        g.fillOval(0,0,3,3);
+    }
 }
 
 

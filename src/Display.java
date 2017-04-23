@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
-public class Display extends JFrame {
+public class Display {
 
     private JFrame window;
     public Triangle[] triangles;
@@ -14,7 +14,7 @@ public class Display extends JFrame {
     public JPanel content;
 
 
-    public void create(int width, int height, String title){//метод для создания окна
+    public void create(final int width, int height, String title){//метод для создания окна
 
 
 
@@ -46,6 +46,7 @@ public class Display extends JFrame {
         content.setLayout(null);
         window.getContentPane().add(content);
         content.setBounds(0,0,767,800);
+        clrscr();
 
 
 
@@ -91,6 +92,7 @@ public class Display extends JFrame {
         //слушатель кнопки рандом
         ButRanAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                clrscr();
                 points=AddRan();
                 for(int i=0;i<points.length;i++){
                     System.out.println(i+1+" "+points[i]);
@@ -106,7 +108,6 @@ public class Display extends JFrame {
                 ButOK.setVisible(true);
                 ButRanAdd.setBounds(5,80,242,50);
                 ButRanAdd.setText("Изменить случайные точки");
-                content.repaint();
             }
         });
 
@@ -197,16 +198,17 @@ public class Display extends JFrame {
     }
 
     private void writing(Point[] points){
-        content.repaint();
+        for(int i=0;i<points.length;i++){
+            content.add(points[i]);
+            points[i].setBounds(points[i].getXP(),points[i].getYP(),6,6);
+            points[i].repaint();
+        }
     }
 
 
-    public void
-    paint(Graphics g){
-        super.paint(g);
-        g.setColor(Color.BLACK);
-        for(Point p:points){
-            g.drawOval(p.getXP()-2,p.getYP()-2,5,5);
-        }
+    private void clrscr(){
+        Graphics g=content.getGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(1,1,content.getWidth()-1,content.getHeight()-1);
     }
 }
