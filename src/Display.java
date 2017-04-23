@@ -4,14 +4,17 @@ import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Display {
 
+    private static ArrayList<Point> pointList = new ArrayList<Point>();
     private JFrame window;
     public Triangle[] triangles;
     public Point[] points;
     public JPanel content;
+    boolean flg=false;
 
 
     public void create(final int width, int height, String title){//метод для создания окна
@@ -20,6 +23,7 @@ public class Display {
 
 
         //окно
+
         window=new JFrame(title);
         JFrame.setDefaultLookAndFeelDecorated(true);
         window.setLayout(null);
@@ -112,16 +116,47 @@ public class Display {
         });
 
 
+        ButOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(flg) {
+                    points = new Point[pointList.size()];
+                    for (int i = 0; i < pointList.size(); i++) {
+                        points[i] = pointList.get(i);
+                    }
+                    triangles = mainfunc(points);
+                }
+                docreate();
+            }
+        });
 
 
         //слушатель кнопки добавить
         ButAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addPoint();
+                ButRanAdd.setVisible(false);
+                LaOr.setVisible(false);
+                flg=true;
+                int X = (!TextX.getText().equals("")?Integer.parseInt(TextX.getText()):0);
+                int Y= (!TextY.getText().equals("")?Integer.parseInt(TextY.getText()):0);
+                if (X > 0 && Y > 0) {
+                    pointList.add(new Point(X, Y));
+                }
+                if (pointList.size()%3==0){
+                    ButOK.setVisible(true);
+                    LaOr.setVisible(true);
+
+                }else{
+                    ButOK.setVisible(false);
+                    LaOr.setVisible(false);
+                }
+                content.add(pointList.get(pointList.size()-1));
+                pointList.get(pointList.size()-1).setBounds(pointList.get(pointList.size()-1).getXP(),pointList.get(pointList.size()-1).getYP(),6,6);
+                pointList.get(pointList.size()-1).repaint();
             }
         });
-
     }
+
+
 
 
 
@@ -138,7 +173,7 @@ public class Display {
         Point[] ArrG=new Point[3*NG];
 
         for(int i=0;i<3*NG;i++){
-            ArrG[i]=new Point(random.nextInt(767),random.nextInt(800));
+            ArrG[i]=new Point(random.nextInt(760),random.nextInt(780));
         }
 
         return ArrG;
@@ -193,10 +228,6 @@ public class Display {
     }// вернет массив из готовых треугольников
 
 
-    private void addPoint(){
-
-    }
-
     private void writing(Point[] points){
         for(int i=0;i<points.length;i++){
             content.add(points[i]);
@@ -210,5 +241,15 @@ public class Display {
         Graphics g=content.getGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(1,1,content.getWidth()-1,content.getHeight()-1);
+    }
+
+    private void docreate(){
+        for (int i=0;i<triangles.length;i++){
+            Graphics g=content.getGraphics();
+            g.setColor(Color.GREEN);
+            g.drawLine(triangles[i].ax+1,triangles[i].ay+1,triangles[i].bx+1,triangles[i].by+1);
+            g.drawLine(triangles[i].cx+1,triangles[i].cy+1,triangles[i].bx+1,triangles[i].by+1);
+            g.drawLine(triangles[i].ax+1,triangles[i].ay+1,triangles[i].cx+1,triangles[i].cy+1);
+        }
     }
 }
