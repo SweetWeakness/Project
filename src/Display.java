@@ -4,8 +4,12 @@ import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Display {
 
@@ -50,7 +54,6 @@ public class Display {
         content.setLayout(null);
         window.getContentPane().add(content);
         content.setBounds(0,0,767,800);
-        clrscr();
 
 
 
@@ -61,6 +64,16 @@ public class Display {
         final JButton ButAdd=new JButton("Добавить точку");
         butpan.add(ButAdd);
         ButAdd.setBounds(30,80,192,50);
+
+        final JButton ButWrite=new JButton("Записать в файл");
+        butpan.add(ButWrite);
+        ButWrite.setVisible(false);
+        ButWrite.setBounds(5,410,242,50);
+
+        final JButton ButAgain=new JButton("Начать заново");
+        butpan.add(ButAgain);
+        ButAgain.setBounds(30,600,192,50);
+        ButAgain.setVisible(false);
 
         final JLabel LaX=new JLabel("X :");
         butpan.add(LaX);
@@ -89,6 +102,14 @@ public class Display {
         butpan.add(ButOK);
         ButOK.setBounds(5,245,242,50);
 
+        final JLabel LaOr2=new JLabel("<<ИЛИ>>");
+        butpan.add(LaOr2);
+        LaOr2.setBounds(100,335,60,30);
+
+        final JButton ButFile=new JButton("Считать точки из файла");
+        butpan.add(ButFile);
+        ButFile.setBounds(5,410,242,50);
+
 
 
 
@@ -96,6 +117,7 @@ public class Display {
         //слушатель кнопки рандом
         ButRanAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                ButAgain.setVisible(true);
                 clrscr();
                 points=AddRan();
                 for(int i=0;i<points.length;i++){
@@ -110,6 +132,8 @@ public class Display {
                 TextX.setVisible(false);
                 TextY.setVisible(false);
                 ButOK.setVisible(true);
+                ButFile.setVisible(false);
+                LaOr2.setVisible(false);
                 ButRanAdd.setBounds(5,80,242,50);
                 ButRanAdd.setText("Изменить случайные точки");
             }
@@ -118,14 +142,20 @@ public class Display {
 
         ButOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(flg) {
-                    points = new Point[pointList.size()];
-                    for (int i = 0; i < pointList.size(); i++) {
-                        points[i] = pointList.get(i);
+                ButAgain.setVisible(true);
+                ButWrite.setVisible(true);
+                try {
+                    if (flg) {
+                        points = new Point[pointList.size()];
+                        for (int i = 0; i < pointList.size(); i++) {
+                            points[i] = pointList.get(i);
+                        }
+                        triangles = mainfunc(points);
                     }
-                    triangles = mainfunc(points);
+                    docreate();
+                }catch (Exception d){
+                    System.out.println("Ошибка, нет точек");
                 }
-                docreate();
             }
         });
 
@@ -133,6 +163,7 @@ public class Display {
         //слушатель кнопки добавить
         ButAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                ButAgain.setVisible(true);
                 ButRanAdd.setVisible(false);
                 LaOr.setVisible(false);
                 flg=true;
@@ -149,11 +180,83 @@ public class Display {
                     ButOK.setVisible(false);
                     LaOr.setVisible(false);
                 }
-                content.add(pointList.get(pointList.size()-1));
-                pointList.get(pointList.size()-1).setBounds(pointList.get(pointList.size()-1).getXP(),pointList.get(pointList.size()-1).getYP(),6,6);
-                pointList.get(pointList.size()-1).repaint();
+                Point tmp=pointList.get(pointList.size()-1);
+                Graphics g=content.getGraphics();
+                g.setColor(Color.black);
+                g.fillOval(tmp.getXP(),tmp.getYP(),4,4);
             }
         });
+
+
+
+
+
+        ButAgain.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clrscr();
+                ButAgain.setVisible(false);
+                ButAdd.setVisible(true);
+                LaX.setVisible(true);
+                LaY.setVisible(true);
+                TextX.setVisible(true);
+                TextY.setVisible(true);
+                ButRanAdd.setBounds(5,245,242,50);
+                LaOr.setVisible(true);
+                LaOr2.setVisible(true);
+                ButFile.setVisible(true);
+                ButOK.setVisible(false);
+                ButRanAdd.setVisible(true);
+                ButWrite.setVisible(false);
+                pointList=new ArrayList<Point>();
+            }
+        });
+
+
+
+
+        ButFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ButAdd.setVisible(false);
+                LaX.setVisible(false);
+                LaY.setVisible(false);
+                TextX.setVisible(false);
+                TextY.setVisible(false);
+                ButOK.setVisible(true);
+                ButAgain.setVisible(true);
+                LaOr.setVisible(false);
+                LaOr2.setVisible(false);
+                ButRanAdd.setVisible(false);
+                ButOK.setVisible(true);
+                ButFile.setVisible(false);
+                flg=true;
+                try(Scanner in=new Scanner(new File("in.txt"))){
+                    while(in.hasNextInt()){
+                        Point tmp=new Point(in.nextInt(),in.nextInt());
+                        pointList.add(tmp);
+                    }
+                    for (int i=0;i<pointList.size();i++){
+                        System.out.println(pointList.get(i));
+                    }
+                    writing(pointList);
+                }catch (FileNotFoundException d){
+                    System.out.println("Файл не найден" + d);
+                }
+            }
+        });
+
+        ButWrite.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try (PrintStream out=new PrintStream(new File("out.txt"))){
+                    for(int i=0;i<triangles.length;i++){
+                        out.println(triangles[i]);
+                    }
+                }catch (Exception d){
+                    System.out.println("Невозможно создать файл");
+                }
+            }
+        });
+
+        clrscr();
     }
 
 
@@ -229,10 +332,18 @@ public class Display {
 
 
     private void writing(Point[] points){
+        Graphics g=content.getGraphics();
+        g.setColor(Color.black);
         for(int i=0;i<points.length;i++){
-            content.add(points[i]);
-            points[i].setBounds(points[i].getXP(),points[i].getYP(),6,6);
-            points[i].repaint();
+            g.fillOval(points[i].getXP(),points[i].getYP(),4,4);
+        }
+    }
+
+    private void writing(ArrayList<Point> tmp){
+        Graphics g=content.getGraphics();
+        g.setColor(Color.black);
+        for(int i=0;i<pointList.size();i++){
+            g.fillOval(tmp.get(i).getXP(),tmp.get(i).getYP(),4,4);
         }
     }
 

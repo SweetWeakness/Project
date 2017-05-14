@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Point extends JPanel{
+public class Point {
 
     //поля координат точки
     private int x;
@@ -60,13 +60,6 @@ public class Point extends JPanel{
         this.flg = false;
     }
 
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        g.setColor(Color.black);
-        g.drawOval(0,0,3,3);
-        g.fillOval(0,0,3,3);
-    }
 }
 
 
